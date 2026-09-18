@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Biochem City</title>
+<style>
+:root{--bg:#08111f;--panel:#101d31;--panel2:#15263e;--text:#f5f7fb;--muted:#a9b7ca;--accent:#57d3ff;--good:#65d68a;--bad:#ff7f7f}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:radial-gradient(circle at 50% 0,#173657 0,#08111f 55%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
+button{font:inherit}
+.app{max-width:900px;margin:auto;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 0 12px}
+h1{font-size:26px;margin:0}.stats{font-size:13px;color:var(--muted);text-align:right}
+#city{position:relative;height:430px;border-radius:24px;overflow:hidden;background:linear-gradient(#132b45 0 52%,#0c1725 52%);border:1px solid #28415d;box-shadow:0 12px 35px #0005}
+.star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:.7}
+.road{position:absolute;background:#25384d;border:1px solid #314960}
+.road.h{left:0;right:0;height:36px}.road.v{top:0;bottom:0;width:36px}
+.building{position:absolute;width:82px;height:100px;border:0;border-radius:9px 9px 3px 3px;background:#33485e;color:white;box-shadow:0 8px 0 #1b2939;touch-action:manipulation}
+.building.done{background:#285b56}.building:active{transform:translateY(2px);box-shadow:0 5px 0 #1b2939}
+.building small{display:block;color:#b8c8da;margin-top:4px;font-size:10px}
+.building .win{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:10px 8px}.win i{height:9px;background:#66798c;border-radius:2px}.done .win i{background:#ffd76a}
+.panel{background:var(--panel);border:1px solid #28415d;border-radius:20px;padding:18px;margin-top:14px}
+.badge{color:var(--accent);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+.reaction{font-size:17px;line-height:1.45;margin:10px 0;color:#dbe7f4}
+.question{font-size:21px;font-weight:700;line-height:1.3;margin:12px 0 16px}
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.answer,.next,.reset{min-height:54px;border-radius:14px;border:1px solid #38536f;background:var(--panel2);color:var(--text);padding:10px;font-weight:650}
+.answer:active,.next:active,.reset:active{transform:scale(.98)}
+.answer.correct{border-color:var(--good);background:#173a31}.answer.wrong{border-color:var(--bad);background:#3b2429}
+.feedback{min-height:50px;margin-top:14px;line-height:1.45;color:var(--muted)}
+.next{width:100%;background:var(--accent);color:#06101a;border:0;margin-top:8px}
+.reset{width:100%;margin-top:12px;color:#ffb2b2;background:#271c25}
+.tip{font-size:13px;color:var(--muted);margin:12px 2px}
+@media(max-width:600px){#city{height:360px}.building{width:64px;height:82px;font-size:11px}.building .win{gap:3px;margin:7px 6px}.answers{grid-template-columns:1fr}.question{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><h1>🧬 Biochem City</h1><div class="stats">Tap a building to study its reaction</div></div><div class="stats" id="stats"></div></header>
+<div id="city"></div>
+<div class="panel">
+<div class="badge" id="pathway"></div>
+<div class="reaction" id="reaction"></div>
+<div class="question" id="question"></div>
+<div class="answers" id="answers"></div>
+<div class="feedback" id="feedback" aria-live="polite"></div>
+<button class="next" id="next">Next reaction</button>
+<button class="reset" id="reset">Reset progress</button>
+</div>
+<div class="tip">iPad tip: rotate your iPad for a wider city view. Your progress is saved on this device.</div>
+</div>
+<script>
+const reactions=[
+{id:"gly1",p:"Glycolysis",t:"Glucose phosphorylation",s:"Glucose",pr:"Glucose-6-phosphate",e:"Hexokinase",c:"ATP → ADP",q:"Which enzyme catalyzes glucose phosphorylation?",a:["Hexokinase","Aldolase","Enolase","Pyruvate kinase"],x:0,ex:"Hexokinase transfers phosphate from ATP to glucose."},
+{id:"gly2",p:"Glycolysis",t:"G6P isomerization",s:"Glucose-6-phosphate",pr:"Fructose-6-phosphate",e:"Phosphoglucose isomerase",c:"None",q:"What is the product of glucose-6-phosphate isomerization?",a:["Fructose-6-phosphate","Pyruvate","Lactate","Acetyl-CoA"],x:0,ex:"Phosphoglucose isomerase converts G6P into F6P."},
+{id:"gly3",p:"Glycolysis",t:"Committed step",s:"Fructose-6-phosphate",pr:"Fructose-1,6-bisphosphate",e:"PFK-1",c:"ATP → ADP",q:"Which enzyme catalyzes the major committed step of glycolysis?",a:["PFK-1","Hexokinase","Aldolase","Enolase"],x:0,ex:"PFK-1 is a major regulatory enzyme of glycolysis."},
+{id:"gly4",p:"Glycolysis",t:"PEP to pyruvate",s:"Phosphoenolpyruvate",pr:"Pyruvate",e:"Pyruvate kinase",c:"ADP → ATP",q:"Which enzyme produces ATP from phosphoenolpyruvate?",a:["Pyruvate kinase","PFK-1","Hexokinase","Lactate dehydrogenase"],x:0,ex:"Pyruvate kinase catalyzes substrate-level phosphorylation."},
+{id:"tca1",p:"TCA Cycle",t:"Citrate formation",s:"Oxaloacetate + Acetyl-CoA",pr:"Citrate",e:"Citrate synthase",c:"CoA-SH released",q:"Which enzyme forms citrate from oxaloacetate and acetyl-CoA?",a:["Citrate synthase","Succinate dehydrogenase","Aconitase","Fumarase"],x:0,ex:"Citrate synthase catalyzes this condensation reaction."},
+{id:"tca2",p:"TCA Cycle",t:"Isocitrate oxidation",s:"Isocitrate",pr:"α-ketoglutarate",e:"Isocitrate dehydrogenase",c:"NAD+ → NADH",q:"Which TCA enzyme produces NADH during oxidative decarboxylation of isocitrate?",a:["Isocitrate dehydrogenase","Aconitase","Malate dehydrogenase","Fumarase"],x:0,ex:"Isocitrate dehydrogenase produces NADH and CO₂."},
+{id:"etc1",p:"Oxidative Phosphorylation",t:"Complex I",s:"NADH",pr:"NAD+",e:"NADH dehydrogenase",c:"NADH → NAD+",q:"Which respiratory-chain complex receives electrons from NADH?",a:["Complex I","Complex II","Complex III","Complex IV"],x:0,ex:"Complex I receives electrons from NADH and contributes to proton pumping."},
+{id:"etc2",p:"Oxidative Phosphorylation",t:"Terminal oxidase",s:"O₂",pr:"H₂O",e:"Cytochrome c oxidase",c:"O₂ reduced",q:"Which complex catalyzes the final reduction of oxygen to water?",a:["Complex IV","Complex I","Complex II","ATP synthase"],x:0,ex:"Complex IV is the terminal electron-transfer complex."},
+{id:"urea1",p:"Urea Cycle",t:"Carbamoyl phosphate",s:"NH₃ + CO₂",pr:"Carbamoyl phosphate",e:"CPS I",c:"ATP",q:"Where does carbamoyl phosphate synthetase I act?",a:["Mitochondrial matrix","Cytosol","Nucleus","ER lumen"],x:0,ex:"CPS I is a mitochondrial matrix enzyme."},
+{id:"urea2",p:"Urea Cycle",t:"Arginine cleavage",s:"Arginine",pr:"Urea + Ornithine",e:"Arginase",c:"H₂O",q:"Which enzyme releases urea from arginine?",a:["Arginase","Argininosuccinate lyase","CPS I","OTC"],x:0,ex:"Arginase catalyzes the final step of the urea cycle."},
+{id:"aa1",p:"Amino Acid Metabolism",t:"Transamination",s:"Amino acid + α-ketoglutarate",pr:"α-keto acid + glutamate",e:"Aminotransferase",c:"PLP",q:"Which cofactor is characteristic of aminotransferases?",a:["PLP","FAD","NAD+","Biotin"],x:0,ex:"Pyridoxal phosphate (PLP) is the coenzyme used by aminotransferases."},
+{id:"lip1",p:"β-Oxidation",t:"First oxidation",s:"Acyl-CoA",pr:"Enoyl-CoA",e:"Acyl-CoA dehydrogenase",c:"FAD → FADH₂",q:"What reduced cofactor is formed in the first oxidation of β-oxidation?",a:["FADH₂","NADPH","NADH","ATP"],x:0,ex:"Acyl-CoA dehydrogenase transfers electrons to FAD."}
+];
+
+const state=JSON.parse(localStorage.getItem("bc_ipad_save")||'{"score":0,"xp":0,"completed":[]}');
+let current=0,answered=false;
+
+const $=id=>document.getElementById(id);
+function save(){localStorage.setItem("bc_ipad_save",JSON.stringify(state));updateStats()}
+function updateStats(){$("stats").textContent=`XP ${state.xp}  •  Level ${1+Math.floor(state.xp/500)}  •  ${state.completed.length}/${reactions.length} complete`}
+function makeCity(){
+ const city=$("city");
+ for(let i=0;i<12;i++){let s=document.createElement("span");s.className="star";s.style.left=(5+Math.random()*90)+"%";s.style.top=(4+Math.random()*40)+"%";city.appendChild(s)}
+ [48,72,96,120,144,168].forEach(y=>{let r=document.createElement("div");r.className="road h";r.style.top=y+"%";city.appendChild(r)})
+ [18,38,58,78].forEach(x=>{let r=document.createElement("div");r.className="road v";r.style.left=x+"%";city.appendChild(r)})
+ reactions.forEach((r,i)=>{
+   let b=document.createElement("button");b.className="building"+(state.completed.includes(r.id)?" done":"");
+   b.style.left=(4+(i%5)*19)+"%";b.style.top=(58+Math.floor(i/5)*18)+"%";
+   b.innerHTML=`${i+1}<small>${r.p}</small><span class="win"><i></i><i></i><i></i><i></i><i></i><i></i></span>`;
+   b.onclick=()=>show(i);city.appendChild(b);
+ });
+}
+function show(i){
+ current=i;answered=false;const r=reactions[i];
+ $("pathway").textContent=r.p;
+ $("reaction").innerHTML=`<b>${r.t}</b><br>${r.s} → ${r.pr}<br><small>Enzyme: ${r.e} • ${r.c}</small>`;
+ $("question").textContent=r.q;$("feedback").textContent="";
+ const box=$("answers");box.innerHTML="";
+ r.a.forEach((ans,n)=>{let b=document.createElement("button");b.className="answer";b.textContent=ans;b.onclick=()=>answer(n,b);box.appendChild(b)});
+ $("next").style.display="none";
+}
+function answer(n,button){
+ if(answered)return;answered=true;const r=reactions[current];
+ document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+ if(n===r.x){button.classList.add("correct");if(!state.completed.includes(r.id)){state.completed.push(r.id);state.xp+=100;state.score+=100;save()}$("feedback").innerHTML=`<b style="color:var(--good)">Correct! +100 XP</b><br>${r.ex}`}
+ else {button.classList.add("wrong");$("feedback").innerHTML=`<b style="color:var(--bad)">Not correct.</b><br>${r.ex}`}
+ $("next").style.display="block";makeCity();
+}
+$("next").onclick=()=>show((current+1)%reactions.length);
+$("reset").onclick=()=>{if(confirm("Reset all Biochem City progress?")){localStorage.removeItem("bc_ipad_save");location.reload()}};
+updateStats();makeCity();show(0);
+</script>
+</body>
+</html>
