@@ -3,108 +3,200 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Biochem City</title>
+<meta name="theme-color" content="#07111f">
+<title>Biochem City — iPad Edition</title>
 <style>
-:root{--bg:#08111f;--panel:#101d31;--panel2:#15263e;--text:#f5f7fb;--muted:#a9b7ca;--accent:#57d3ff;--good:#65d68a;--bad:#ff7f7f}
+:root{
+ --bg:#07111f;--panel:#0e1b2c;--panel2:#13243a;--line:#27415f;
+ --text:#f4f7fb;--muted:#9eb0c5;--accent:#55d6ff;--good:#66df96;--bad:#ff7777;
+ --gold:#ffd66b;--purple:#b99cff;
+}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:radial-gradient(circle at 50% 0,#173657 0,#08111f 55%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;min-height:100vh}
-button{font:inherit}
-.app{max-width:900px;margin:auto;padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom)}
-header{display:flex;justify-content:space-between;align-items:center;padding:18px 0 12px}
-h1{font-size:26px;margin:0}.stats{font-size:13px;color:var(--muted);text-align:right}
-#city{position:relative;height:430px;border-radius:24px;overflow:hidden;background:linear-gradient(#132b45 0 52%,#0c1725 52%);border:1px solid #28415d;box-shadow:0 12px 35px #0005}
-.star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;opacity:.7}
-.road{position:absolute;background:#25384d;border:1px solid #314960}
-.road.h{left:0;right:0;height:36px}.road.v{top:0;bottom:0;width:36px}
-.building{position:absolute;width:82px;height:100px;border:0;border-radius:9px 9px 3px 3px;background:#33485e;color:white;box-shadow:0 8px 0 #1b2939;touch-action:manipulation}
-.building.done{background:#285b56}.building:active{transform:translateY(2px);box-shadow:0 5px 0 #1b2939}
-.building small{display:block;color:#b8c8da;margin-top:4px;font-size:10px}
-.building .win{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:10px 8px}.win i{height:9px;background:#66798c;border-radius:2px}.done .win i{background:#ffd76a}
-.panel{background:var(--panel);border:1px solid #28415d;border-radius:20px;padding:18px;margin-top:14px}
-.badge{color:var(--accent);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
-.reaction{font-size:17px;line-height:1.45;margin:10px 0;color:#dbe7f4}
-.question{font-size:21px;font-weight:700;line-height:1.3;margin:12px 0 16px}
-.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.answer,.next,.reset{min-height:54px;border-radius:14px;border:1px solid #38536f;background:var(--panel2);color:var(--text);padding:10px;font-weight:650}
-.answer:active,.next:active,.reset:active{transform:scale(.98)}
-.answer.correct{border-color:var(--good);background:#173a31}.answer.wrong{border-color:var(--bad);background:#3b2429}
-.feedback{min-height:50px;margin-top:14px;line-height:1.45;color:var(--muted)}
-.next{width:100%;background:var(--accent);color:#06101a;border:0;margin-top:8px}
-.reset{width:100%;margin-top:12px;color:#ffb2b2;background:#271c25}
-.tip{font-size:13px;color:var(--muted);margin:12px 2px}
-@media(max-width:600px){#city{height:360px}.building{width:64px;height:82px;font-size:11px}.building .win{gap:3px;margin:7px 6px}.answers{grid-template-columns:1fr}.question{font-size:19px}}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+body{min-height:100vh;overscroll-behavior:none}
+button{font:inherit;color:inherit}
+.app{max-width:1000px;margin:auto;padding:calc(env(safe-area-inset-top) + 12px) 16px calc(env(safe-area-inset-bottom) + 20px)}
+.screen{display:none}.screen.active{display:block}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}
+.brand{font-size:25px;font-weight:800}.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.stats{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.pill{background:var(--panel);border:1px solid var(--line);padding:8px 10px;border-radius:999px;font-size:12px;font-weight:700}
+.hero{padding:24px 4px 18px}
+.hero h2{font-size:42px;line-height:1.02;margin:0 0 12px;max-width:650px}
+.hero p{color:var(--muted);font-size:17px;line-height:1.5;max-width:680px}
+.primary,.secondary,.danger{border:0;border-radius:15px;min-height:52px;padding:0 20px;font-weight:800}
+.primary{background:var(--accent);color:#04101a}.secondary{background:var(--panel2);border:1px solid var(--line)}.danger{background:#2c1820;color:#ffb6b6}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.section-title{font-size:15px;font-weight:800;margin:18px 0 10px;color:#dce8f4}
+.pathways{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.path{position:relative;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:17px;min-height:120px;overflow:hidden}
+.path:active,.building:active,.answer:active,.primary:active,.secondary:active{transform:scale(.985)}
+.path .icon{font-size:30px}.path strong{display:block;margin-top:8px}.path small{display:block;color:var(--muted);margin-top:5px}.path .bar{position:absolute;left:0;bottom:0;height:4px;background:var(--accent)}
+.city-wrap{position:relative;height:560px;border:1px solid var(--line);border-radius:24px;overflow:hidden;background:linear-gradient(#112a45 0 43%,#0a1422 43%);touch-action:none}
+.city-label{position:absolute;z-index:4;left:16px;top:14px;background:#07111dcc;border:1px solid var(--line);border-radius:12px;padding:9px 11px;font-size:12px;font-weight:800}
+.city{position:absolute;inset:0;transform-origin:center;transition:transform .15s}
+.water{position:absolute;right:-8%;top:5%;width:38%;height:40%;border-radius:50%;background:#163f59;opacity:.7}
+.road{position:absolute;background:#24364a;border:1px solid #304b64}
+.hroad{left:-5%;right:-5%;height:38px}.vroad{top:-5%;bottom:-5%;width:38px}
+.building{position:absolute;width:112px;height:128px;border:1px solid #46627c;border-radius:12px 12px 4px 4px;background:#263d55;box-shadow:0 8px 0 #162333;transition:.15s}
+.building.done{background:#28594f;border-color:#55cba4}
+.building.locked{filter:saturate(.35);opacity:.8}
+.building .roof{height:17px;background:#334e68;border-radius:11px 11px 0 0}
+.building.done .roof{background:#3a806d}
+.building .name{font-size:11px;font-weight:800;padding:7px 7px 0}.building .enzyme{font-size:9px;color:#afc0d2;padding:3px 7px}
+.windows{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:9px}.windows i{height:9px;border-radius:2px;background:#63758a}.done .windows i{background:var(--gold);box-shadow:0 0 7px #ffd66b55}
+.city-controls{position:absolute;z-index:5;right:12px;bottom:12px;display:flex;gap:7px}.city-controls button{width:46px;height:46px;border-radius:14px;background:#07111ddd;border:1px solid var(--line);font-size:20px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px}
+.back{margin-bottom:12px}
+.crumb{color:var(--accent);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.reaction-title{font-size:27px;margin:8px 0}
+.eq{background:#091624;border:1px solid #213a53;border-radius:14px;padding:14px;font-size:17px;line-height:1.5;overflow:auto}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:10px}.meta div{background:var(--panel2);border-radius:12px;padding:10px}.meta small{display:block;color:var(--muted);font-size:10px;text-transform:uppercase}.meta b{font-size:13px}
+.question{font-size:21px;font-weight:800;line-height:1.35;margin:20px 0 14px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{min-height:58px;background:var(--panel2);border:1px solid var(--line);border-radius:15px;padding:10px 13px;text-align:left;font-weight:700}.answer.correct{border-color:var(--good);background:#163a31}.answer.wrong{border-color:var(--bad);background:#3a2027}.answer:disabled{opacity:1}
+.feedback{min-height:62px;padding:14px 0;color:var(--muted);line-height:1.45}.feedback.good{color:var(--good)}.feedback.bad{color:#ffaaaa}
+.result-head{display:flex;justify-content:space-between;align-items:center;gap:12px}.xp{font-weight:900;color:var(--gold)}
+.table{display:grid;gap:8px}.row-item{display:flex;justify-content:space-between;gap:12px;background:var(--panel2);border-radius:12px;padding:12px}.row-item small{color:var(--muted)}
+@media(max-width:700px){.pathways{grid-template-columns:1fr 1fr}.hero h2{font-size:34px}.meta{grid-template-columns:1fr 1fr}.city-wrap{height:480px}.building{width:86px;height:105px}.building .enzyme{display:none}.answers{grid-template-columns:1fr}}
+@media(max-width:430px){.pathways{grid-template-columns:1fr}.meta{grid-template-columns:1fr}.city-wrap{height:430px}.building{width:72px;height:90px}.building .name{font-size:9px}.windows{padding:6px;gap:3px}}
 </style>
 </head>
 <body>
 <div class="app">
-<header><div><h1>🧬 Biochem City</h1><div class="stats">Tap a building to study its reaction</div></div><div class="stats" id="stats"></div></header>
-<div id="city"></div>
-<div class="panel">
-<div class="badge" id="pathway"></div>
-<div class="reaction" id="reaction"></div>
-<div class="question" id="question"></div>
-<div class="answers" id="answers"></div>
-<div class="feedback" id="feedback" aria-live="polite"></div>
-<button class="next" id="next">Next reaction</button>
-<button class="reset" id="reset">Reset progress</button>
-</div>
-<div class="tip">iPad tip: rotate your iPad for a wider city view. Your progress is saved on this device.</div>
+
+<section id="home" class="screen active">
+ <div class="top"><div><div class="brand">🧬 Biochem City</div><div class="sub">Medical biochemistry learning game</div></div><div class="stats" id="homeStats"></div></div>
+ <div class="hero">
+  <div class="crumb">Welcome to the city</div>
+  <h2>Turn metabolism into a city you can explore.</h2>
+  <p>Master biochemical reactions, unlock buildings and follow pathways from one reaction to the next.</p>
+  <div class="row"><button class="primary" id="playBtn">Enter the city</button><button class="secondary" id="continueBtn">Continue studying</button></div>
+ </div>
+ <div class="section-title">Pathways</div>
+ <div class="pathways" id="pathways"></div>
+ <div class="section-title">Progress</div>
+ <div class="card"><div class="table" id="progressTable"></div></div>
+ <button class="danger" id="resetBtn" style="margin-top:12px;width:100%">Reset saved progress</button>
+</section>
+
+<section id="cityScreen" class="screen">
+ <div class="top"><div><div class="brand">Biochem City</div><div class="sub">Tap a building to enter a reaction</div></div><div class="stats" id="cityStats"></div></div>
+ <button class="secondary back" id="cityBack">← Home</button>
+ <div class="city-wrap" id="cityWrap"><div class="city-label" id="cityLabel">All pathways</div><div class="city" id="city"></div>
+  <div class="city-controls"><button id="zoomOut">−</button><button id="zoomReset">⌖</button><button id="zoomIn">+</button></div>
+ </div>
+</section>
+
+<section id="quizScreen" class="screen">
+ <div class="top"><div><div class="brand">Reaction Challenge</div><div class="sub" id="quizCounter"></div></div><div class="stats" id="quizStats"></div></div>
+ <button class="secondary back" id="quizBack">← City</button>
+ <div class="card">
+  <div class="crumb" id="qPath"></div><div class="reaction-title" id="qTitle"></div>
+  <div class="eq" id="qEquation"></div>
+  <div class="meta"><div><small>Enzyme</small><b id="qEnzyme"></b></div><div><small>Cofactors</small><b id="qCofactor"></b></div><div><small>Mastery</small><b id="qMastery"></b></div></div>
+  <div class="question" id="qQuestion"></div>
+  <div class="answers" id="qAnswers"></div>
+  <div class="feedback" id="qFeedback"></div>
+  <button class="primary" id="nextBtn" style="display:none;width:100%">Next reaction →</button>
+ </div>
+</section>
+
 </div>
 <script>
 const reactions=[
-{id:"gly1",p:"Glycolysis",t:"Glucose phosphorylation",s:"Glucose",pr:"Glucose-6-phosphate",e:"Hexokinase",c:"ATP → ADP",q:"Which enzyme catalyzes glucose phosphorylation?",a:["Hexokinase","Aldolase","Enolase","Pyruvate kinase"],x:0,ex:"Hexokinase transfers phosphate from ATP to glucose."},
-{id:"gly2",p:"Glycolysis",t:"G6P isomerization",s:"Glucose-6-phosphate",pr:"Fructose-6-phosphate",e:"Phosphoglucose isomerase",c:"None",q:"What is the product of glucose-6-phosphate isomerization?",a:["Fructose-6-phosphate","Pyruvate","Lactate","Acetyl-CoA"],x:0,ex:"Phosphoglucose isomerase converts G6P into F6P."},
-{id:"gly3",p:"Glycolysis",t:"Committed step",s:"Fructose-6-phosphate",pr:"Fructose-1,6-bisphosphate",e:"PFK-1",c:"ATP → ADP",q:"Which enzyme catalyzes the major committed step of glycolysis?",a:["PFK-1","Hexokinase","Aldolase","Enolase"],x:0,ex:"PFK-1 is a major regulatory enzyme of glycolysis."},
-{id:"gly4",p:"Glycolysis",t:"PEP to pyruvate",s:"Phosphoenolpyruvate",pr:"Pyruvate",e:"Pyruvate kinase",c:"ADP → ATP",q:"Which enzyme produces ATP from phosphoenolpyruvate?",a:["Pyruvate kinase","PFK-1","Hexokinase","Lactate dehydrogenase"],x:0,ex:"Pyruvate kinase catalyzes substrate-level phosphorylation."},
-{id:"tca1",p:"TCA Cycle",t:"Citrate formation",s:"Oxaloacetate + Acetyl-CoA",pr:"Citrate",e:"Citrate synthase",c:"CoA-SH released",q:"Which enzyme forms citrate from oxaloacetate and acetyl-CoA?",a:["Citrate synthase","Succinate dehydrogenase","Aconitase","Fumarase"],x:0,ex:"Citrate synthase catalyzes this condensation reaction."},
-{id:"tca2",p:"TCA Cycle",t:"Isocitrate oxidation",s:"Isocitrate",pr:"α-ketoglutarate",e:"Isocitrate dehydrogenase",c:"NAD+ → NADH",q:"Which TCA enzyme produces NADH during oxidative decarboxylation of isocitrate?",a:["Isocitrate dehydrogenase","Aconitase","Malate dehydrogenase","Fumarase"],x:0,ex:"Isocitrate dehydrogenase produces NADH and CO₂."},
-{id:"etc1",p:"Oxidative Phosphorylation",t:"Complex I",s:"NADH",pr:"NAD+",e:"NADH dehydrogenase",c:"NADH → NAD+",q:"Which respiratory-chain complex receives electrons from NADH?",a:["Complex I","Complex II","Complex III","Complex IV"],x:0,ex:"Complex I receives electrons from NADH and contributes to proton pumping."},
-{id:"etc2",p:"Oxidative Phosphorylation",t:"Terminal oxidase",s:"O₂",pr:"H₂O",e:"Cytochrome c oxidase",c:"O₂ reduced",q:"Which complex catalyzes the final reduction of oxygen to water?",a:["Complex IV","Complex I","Complex II","ATP synthase"],x:0,ex:"Complex IV is the terminal electron-transfer complex."},
-{id:"urea1",p:"Urea Cycle",t:"Carbamoyl phosphate",s:"NH₃ + CO₂",pr:"Carbamoyl phosphate",e:"CPS I",c:"ATP",q:"Where does carbamoyl phosphate synthetase I act?",a:["Mitochondrial matrix","Cytosol","Nucleus","ER lumen"],x:0,ex:"CPS I is a mitochondrial matrix enzyme."},
-{id:"urea2",p:"Urea Cycle",t:"Arginine cleavage",s:"Arginine",pr:"Urea + Ornithine",e:"Arginase",c:"H₂O",q:"Which enzyme releases urea from arginine?",a:["Arginase","Argininosuccinate lyase","CPS I","OTC"],x:0,ex:"Arginase catalyzes the final step of the urea cycle."},
-{id:"aa1",p:"Amino Acid Metabolism",t:"Transamination",s:"Amino acid + α-ketoglutarate",pr:"α-keto acid + glutamate",e:"Aminotransferase",c:"PLP",q:"Which cofactor is characteristic of aminotransferases?",a:["PLP","FAD","NAD+","Biotin"],x:0,ex:"Pyridoxal phosphate (PLP) is the coenzyme used by aminotransferases."},
-{id:"lip1",p:"β-Oxidation",t:"First oxidation",s:"Acyl-CoA",pr:"Enoyl-CoA",e:"Acyl-CoA dehydrogenase",c:"FAD → FADH₂",q:"What reduced cofactor is formed in the first oxidation of β-oxidation?",a:["FADH₂","NADPH","NADH","ATP"],x:0,ex:"Acyl-CoA dehydrogenase transfers electrons to FAD."}
+{id:"gly1",p:"Glycolysis",icon:"⚡",t:"Glucose phosphorylation",s:"Glucose",pr:"Glucose-6-phosphate",e:"Hexokinase",c:"ATP → ADP",q:"Which enzyme catalyzes glucose phosphorylation?",a:["Hexokinase","Aldolase","Enolase","Pyruvate kinase"],x:0,ex:"Hexokinase transfers phosphate from ATP to glucose."},
+{id:"gly2",p:"Glycolysis",icon:"⚡",t:"G6P isomerization",s:"Glucose-6-phosphate",pr:"Fructose-6-phosphate",e:"Phosphoglucose isomerase",c:"None",q:"What is the product of glucose-6-phosphate isomerization?",a:["Fructose-6-phosphate","Pyruvate","Lactate","Acetyl-CoA"],x:0,ex:"Phosphoglucose isomerase converts G6P into F6P."},
+{id:"gly3",p:"Glycolysis",icon:"⚡",t:"Committed step",s:"Fructose-6-phosphate",pr:"Fructose-1,6-bisphosphate",e:"PFK-1",c:"ATP → ADP",q:"Which enzyme catalyzes the major committed step of glycolysis?",a:["PFK-1","Hexokinase","Aldolase","Enolase"],x:0,ex:"PFK-1 is a major regulatory enzyme of glycolysis."},
+{id:"gly4",p:"Glycolysis",icon:"⚡",t:"PEP to pyruvate",s:"Phosphoenolpyruvate",pr:"Pyruvate",e:"Pyruvate kinase",c:"ADP → ATP",q:"Which enzyme produces ATP from phosphoenolpyruvate?",a:["Pyruvate kinase","PFK-1","Hexokinase","Lactate dehydrogenase"],x:0,ex:"Pyruvate kinase catalyzes substrate-level phosphorylation."},
+{id:"tca1",p:"TCA Cycle",icon:"🔄",t:"Citrate formation",s:"Oxaloacetate + Acetyl-CoA",pr:"Citrate",e:"Citrate synthase",c:"CoA-SH released",q:"Which enzyme forms citrate from oxaloacetate and acetyl-CoA?",a:["Citrate synthase","Succinate dehydrogenase","Aconitase","Fumarase"],x:0,ex:"Citrate synthase catalyzes this condensation."},
+{id:"tca2",p:"TCA Cycle",icon:"🔄",t:"Isocitrate oxidation",s:"Isocitrate",pr:"α-ketoglutarate",e:"Isocitrate dehydrogenase",c:"NAD+ → NADH",q:"Which TCA enzyme produces NADH during oxidative decarboxylation of isocitrate?",a:["Isocitrate dehydrogenase","Aconitase","Malate dehydrogenase","Fumarase"],x:0,ex:"Isocitrate dehydrogenase produces NADH and CO₂."},
+{id:"etc1",p:"Oxidative Phosphorylation",icon:"🔋",t:"Complex I",s:"NADH",pr:"NAD+",e:"NADH dehydrogenase",c:"NADH → NAD+",q:"Which respiratory-chain complex receives electrons from NADH?",a:["Complex I","Complex II","Complex III","Complex IV"],x:0,ex:"Complex I receives electrons from NADH and contributes to proton pumping."},
+{id:"etc2",p:"Oxidative Phosphorylation",icon:"🔋",t:"Terminal oxidase",s:"O₂",pr:"H₂O",e:"Cytochrome c oxidase",c:"O₂ reduced",q:"Which complex catalyzes the final reduction of oxygen to water?",a:["Complex IV","Complex I","Complex II","ATP synthase"],x:0,ex:"Complex IV is the terminal electron-transfer complex."},
+{id:"urea1",p:"Urea Cycle",icon:"💧",t:"Carbamoyl phosphate",s:"NH₃ + CO₂",pr:"Carbamoyl phosphate",e:"CPS I",c:"ATP",q:"Where does carbamoyl phosphate synthetase I act?",a:["Mitochondrial matrix","Cytosol","Nucleus","ER lumen"],x:0,ex:"CPS I is a mitochondrial matrix enzyme."},
+{id:"urea2",p:"Urea Cycle",icon:"💧",t:"Arginine cleavage",s:"Arginine",pr:"Urea + Ornithine",e:"Arginase",c:"H₂O",q:"Which enzyme releases urea from arginine?",a:["Arginase","Argininosuccinate lyase","CPS I","OTC"],x:0,ex:"Arginase catalyzes the final step of the urea cycle."},
+{id:"aa1",p:"Amino Acid Metabolism",icon:"🧪",t:"Transamination",s:"Amino acid + α-ketoglutarate",pr:"α-keto acid + glutamate",e:"Aminotransferase",c:"PLP",q:"Which cofactor is characteristic of aminotransferases?",a:["PLP","FAD","NAD+","Biotin"],x:0,ex:"Pyridoxal phosphate is the coenzyme used by aminotransferases."},
+{id:"lip1",p:"β-Oxidation",icon:"🔥",t:"First oxidation",s:"Acyl-CoA",pr:"Enoyl-CoA",e:"Acyl-CoA dehydrogenase",c:"FAD → FADH₂",q:"What reduced cofactor is formed in the first oxidation of β-oxidation?",a:["FADH₂","NADPH","NADH","ATP"],x:0,ex:"Acyl-CoA dehydrogenase transfers electrons to FAD."},
+{id:"lip2",p:"β-Oxidation",icon:"🔥",t:"Hydration",s:"Enoyl-CoA",pr:"β-hydroxyacyl-CoA",e:"Enoyl-CoA hydratase",c:"H₂O",q:"What type of reaction occurs during the second step of β-oxidation?",a:["Hydration","Phosphorylation","Carboxylation","Transamination"],x:0,ex:"Enoyl-CoA hydratase adds water across the double bond."},
+{id:"pp1",p:"Pentose Phosphate Pathway",icon:"🧫",t:"Oxidative phase",s:"Glucose-6-phosphate",pr:"6-phosphogluconolactone",e:"G6P dehydrogenase",c:"NADP+ → NADPH",q:"Which reduced cofactor is generated by G6P dehydrogenase?",a:["NADPH","NADH","FADH₂","ATP"],x:0,ex:"The oxidative phase of the PPP generates NADPH."}
 ];
 
-const state=JSON.parse(localStorage.getItem("bc_ipad_save")||'{"score":0,"xp":0,"completed":[]}');
-let current=0,answered=false;
+const pathways=[...new Set(reactions.map(r=>r.p))];
+let save=JSON.parse(localStorage.getItem("biochem_city_v2")||'{"xp":0,"score":0,"completed":[]}');
+if(!Array.isArray(save.completed))save.completed=[];
+let current=0, answered=false, zoom=1, filter="All pathways";
 
 const $=id=>document.getElementById(id);
-function save(){localStorage.setItem("bc_ipad_save",JSON.stringify(state));updateStats()}
-function updateStats(){$("stats").textContent=`XP ${state.xp}  •  Level ${1+Math.floor(state.xp/500)}  •  ${state.completed.length}/${reactions.length} complete`}
-function makeCity(){
- const city=$("city");
- for(let i=0;i<12;i++){let s=document.createElement("span");s.className="star";s.style.left=(5+Math.random()*90)+"%";s.style.top=(4+Math.random()*40)+"%";city.appendChild(s)}
- [48,72,96,120,144,168].forEach(y=>{let r=document.createElement("div");r.className="road h";r.style.top=y+"%";city.appendChild(r)})
- [18,38,58,78].forEach(x=>{let r=document.createElement("div");r.className="road v";r.style.left=x+"%";city.appendChild(r)})
- reactions.forEach((r,i)=>{
-   let b=document.createElement("button");b.className="building"+(state.completed.includes(r.id)?" done":"");
-   b.style.left=(4+(i%5)*19)+"%";b.style.top=(58+Math.floor(i/5)*18)+"%";
-   b.innerHTML=`${i+1}<small>${r.p}</small><span class="win"><i></i><i></i><i></i><i></i><i></i><i></i></span>`;
-   b.onclick=()=>show(i);city.appendChild(b);
+function persist(){localStorage.setItem("biochem_city_v2",JSON.stringify(save));updateStats()}
+function level(){return 1+Math.floor(save.xp/500)}
+function updateStats(){
+ const t=`⭐ ${save.xp} XP  •  Lv ${level()}  •  ${save.completed.length}/${reactions.length}`;
+ $("homeStats").textContent=t;$("cityStats").textContent=t;$("quizStats").textContent=t;
+}
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));$(id).classList.add("active");window.scrollTo(0,0);updateStats()}
+function pathwayCards(){
+ $("pathways").innerHTML="";
+ pathways.forEach(p=>{
+  const count=reactions.filter(r=>r.p===p).length,done=reactions.filter(r=>r.p===p&&save.completed.includes(r.id)).length;
+  const b=document.createElement("button");b.className="path";b.innerHTML=`<span class="icon">${reactions.find(r=>r.p===p).icon}</span><strong>${p}</strong><small>${done}/${count} reactions mastered</small><span class="bar" style="width:${count?done/count*100:0}%"></span>`;
+  b.onclick=()=>{filter=p;buildCity();showScreen("cityScreen")};$("pathways").appendChild(b);
  });
 }
-function show(i){
- current=i;answered=false;const r=reactions[i];
- $("pathway").textContent=r.p;
- $("reaction").innerHTML=`<b>${r.t}</b><br>${r.s} → ${r.pr}<br><small>Enzyme: ${r.e} • ${r.c}</small>`;
- $("question").textContent=r.q;$("feedback").textContent="";
- const box=$("answers");box.innerHTML="";
- r.a.forEach((ans,n)=>{let b=document.createElement("button");b.className="answer";b.textContent=ans;b.onclick=()=>answer(n,b);box.appendChild(b)});
- $("next").style.display="none";
+function progress(){
+ $("progressTable").innerHTML=pathways.map(p=>{
+  const rs=reactions.filter(r=>r.p===p),d=rs.filter(r=>save.completed.includes(r.id)).length;
+  return `<div class="row-item"><span>${rs[0].icon} ${p}</span><small>${d}/${rs.length} mastered</small></div>`;
+ }).join("");
+}
+function makeRoads(city){
+ [43,70,97].forEach(y=>{let d=document.createElement("div");d.className="road hroad";d.style.top=y+"%";city.appendChild(d)});
+ [17,42,67,92].forEach(x=>{let d=document.createElement("div");d.className="road vroad";d.style.left=x+"%";city.appendChild(d)});
+}
+function buildCity(){
+ const city=$("city");city.innerHTML="";
+ $("cityLabel").textContent=filter;
+ const water=document.createElement("div");water.className="water";city.appendChild(water);makeRoads(city);
+ const list=filter==="All pathways"?reactions:reactions.filter(r=>r.p===filter);
+ list.forEach((r,i)=>{
+  const global=reactions.indexOf(r),b=document.createElement("button");
+  b.className="building"+(save.completed.includes(r.id)?" done":"");
+  const col=i%5,row=Math.floor(i/5);
+  b.style.left=(3+col*19.3)+"%";b.style.top=(48+row*24)+"%";
+  b.innerHTML=`<div class="roof"></div><div class="name">${r.icon} ${r.title}</div><div class="enzyme">${r.e}</div><div class="windows"><i></i><i></i><i></i><i></i><i></i><i></i></div>`;
+  b.onclick=()=>openQuiz(global);city.appendChild(b);
+ });
+ city.style.transform=`scale(${zoom})`;
+}
+function openQuiz(i){current=i;answered=false;const r=reactions[i];const q=r;showScreen("quizScreen");
+ $("quizCounter").textContent=`Reaction ${i+1} of ${reactions.length}`;
+ $("qPath").textContent=r.icon+"  "+r.p;$("qTitle").textContent=r.t;
+ $("qEquation").textContent=`${r.s}   →   ${r.pr}`;
+ $("qEnzyme").textContent=r.e;$("qCofactor").textContent=r.c;
+ $("qMastery").textContent=save.completed.includes(r.id)?"Mastered":"New";
+ $("qQuestion").textContent=r.q;$("qFeedback").textContent="";
+ $("qFeedback").className="feedback";$("nextBtn").style.display="none";
+ const box=$("qAnswers");box.innerHTML="";
+ r.a.forEach((a,n)=>{const b=document.createElement("button");b.className="answer";b.textContent=a;b.onclick=()=>answer(n,b);box.appendChild(b)});
 }
 function answer(n,button){
  if(answered)return;answered=true;const r=reactions[current];
  document.querySelectorAll(".answer").forEach(b=>b.disabled=true);
- if(n===r.x){button.classList.add("correct");if(!state.completed.includes(r.id)){state.completed.push(r.id);state.xp+=100;state.score+=100;save()}$("feedback").innerHTML=`<b style="color:var(--good)">Correct! +100 XP</b><br>${r.ex}`}
- else {button.classList.add("wrong");$("feedback").innerHTML=`<b style="color:var(--bad)">Not correct.</b><br>${r.ex}`}
- $("next").style.display="block";makeCity();
+ if(n===r.x){
+  button.classList.add("correct");let first=!save.completed.includes(r.id);
+  if(first){save.completed.push(r.id);save.xp+=100;save.score+=100;persist()}
+  $("qFeedback").className="feedback good";$("qFeedback").innerHTML=`<b>Correct! ${first?"+100 XP":"Already mastered"}</b><br>${r.ex}`;
+ }else{button.classList.add("wrong");$("qFeedback").className="feedback bad";$("qFeedback").innerHTML=`<b>Not quite.</b><br>${r.ex}`}
+ $("qMastery").textContent=save.completed.includes(r.id)?"Mastered":"Review again";updateStats();$("nextBtn").style.display="block";
 }
-$("next").onclick=()=>show((current+1)%reactions.length);
-$("reset").onclick=()=>{if(confirm("Reset all Biochem City progress?")){localStorage.removeItem("bc_ipad_save");location.reload()}};
-updateStats();makeCity();show(0);
+function next(){openQuiz((current+1)%reactions.length)}
+$("playBtn").onclick=()=>{filter="All pathways";buildCity();showScreen("cityScreen")};
+$("continueBtn").onclick=()=>{let i=reactions.findIndex(r=>!save.completed.includes(r.id));openQuiz(i<0?0:i)};
+$("cityBack").onclick=()=>{pathwayCards();progress();showScreen("home")};
+$("quizBack").onclick=()=>{buildCity();showScreen("cityScreen")};
+$("nextBtn").onclick=next;
+$("resetBtn").onclick=()=>{if(confirm("Reset all saved progress?")){save={xp:0,score:0,completed:[]};persist();pathwayCards();progress();buildCity();}};
+$("zoomIn").onclick=()=>{zoom=Math.min(1.45,zoom+.1);$("city").style.transform=`scale(${zoom})`};
+$("zoomOut").onclick=()=>{zoom=Math.max(.75,zoom-.1);$("city").style.transform=`scale(${zoom})`};
+$("zoomReset").onclick=()=>{zoom=1;$("city").style.transform="scale(1)"};
+pathwayCards();progress();buildCity();updateStats();
 </script>
 </body>
 </html>
